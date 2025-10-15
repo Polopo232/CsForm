@@ -15,11 +15,13 @@ namespace FormElements
         Button btn;
         Label lbl;
         PictureBox pic;
-        CheckBox c_btn1, c_btn2, c_btn3, c_btn4, c_btn5;
+        CheckBox c_btn1, c_btn2, c_btn3, c_btn4, c_btn5, c_btn6;
         RadioButton r_btn1, r_btn2, r_btn3, r_btn4;
         TabControl tabC;
         TabPage tabP1, tabP2, tabP3;
         ListBox lb;
+        PictureBox pbCat = new PictureBox();
+        PictureBox pbDog = new PictureBox();
         bool t = true;
         public Form1()
         {
@@ -45,7 +47,7 @@ namespace FormElements
             btn.Location = new Point(150, 30);
             btn.Height = 30;
             btn.Width = 100;
-            btn.Click += Btn_Click;
+
             //pealkiri
             lbl = new Label();
             lbl.Text = "Elementide loomine c# abil";
@@ -70,20 +72,27 @@ namespace FormElements
         int click = 0;
         private void Pic_DoubleClick(object sender, EventArgs e)
         {   //Double_Click -> carusel (3-4 images) 1-2-3-4-1-2-3-4-... 
-            string[] images = { "esimene.jpg", "teine.jpg", "kolmas.jpg" };
+            string[] images = { "cat.png", "dog.jpg" };
             string fail = images[click];
             pic.Image = Image.FromFile(@"..\..\Images\" + fail);
             click++;
-            if (click==3) {click = 0;}
+            if (click==2) {click = 0;}
         }
 
         private void Lbl_MouseLeave(object sender, EventArgs e)
         {
-            lbl.BackColor = Color.Transparent;           
-            Form1 Form = new Form1();
-            Form.Show();
-            Hide();
-            
+            lbl.BackColor = Color.Transparent;
+
+            var lbl_answer = MessageBox.Show("Kas sa hindasid teksti?", "Lahe aken", MessageBoxButtons.YesNo);
+
+            if (lbl_answer == DialogResult.Yes)
+            {
+                MessageBox.Show("See oli lahe !!!", "Lahe aken");
+            }
+            else
+            {
+                MessageBox.Show("🖕", "🖕");
+            }
 
         }
 
@@ -91,7 +100,6 @@ namespace FormElements
         {
             lbl.BackColor = Color.FromArgb(200, 10, 20);
         }
-
         private void Tree_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (e.Node.Text=="Nupp")
@@ -111,7 +119,7 @@ namespace FormElements
                 c_btn1 = new CheckBox();
                 c_btn1.Text = "Vali mind";
                 c_btn1.Size = new Size(c_btn1.Text.Length * 9, 20);
-                c_btn1.Location = new Point(310, 420);
+                c_btn1.Location = new Point(310, 450);
                 c_btn1.CheckedChanged += C_btn1_CheckedChanged;
 
                 c_btn2 = new CheckBox();
@@ -134,15 +142,22 @@ namespace FormElements
                 c_btn5.Text = "3";
                 c_btn5.Location = new Point(310, 380);
 
+                c_btn6 = new CheckBox();
+                c_btn6.Size = new Size(100, 30);
+                c_btn6.Text = "4";
+                c_btn6.Location = new Point(310, 410);
+
                 Controls.Add(c_btn1);
                 Controls.Add(c_btn2);
                 Controls.Add(c_btn3);
                 Controls.Add(c_btn4);
                 Controls.Add(c_btn5);
+                Controls.Add(c_btn6);
 
                 c_btn3.Click += new EventHandler(C_btn1_Click);
                 c_btn4.Click += new EventHandler(C_btn1_Click);
                 c_btn5.Click += new EventHandler(C_btn1_Click);
+                c_btn6.Click += new EventHandler(C_btn1_Click);
             }
             else if (e.Node.Text == "Radionupp")
             {
@@ -173,33 +188,33 @@ namespace FormElements
             }
             else if (e.Node.Text== "MessageBox")
             {
-                
-
-                MessageBox.Show("Чуваааак", "Крутое окно");
-                var answer = MessageBox.Show("Напиши крутой текст", "Крутое окно", MessageBoxButtons.OK);
+                MessageBox.Show("Meesike", "Lahe aken");
+                var answer = MessageBox.Show("Kirjuta lahe tekst", "Lahe aken", MessageBoxButtons.OK);
                 if (answer == DialogResult.OK)
                 {
-                    string text = Interaction.InputBox("Сюда писать крутой текст", "Крутое окно", "Mingi tekst");
-                    if (MessageBox.Show("Kas tahad tekst saada Tekskastisse?", "Крутое окно для сохранения", MessageBoxButtons.OKCancel) == DialogResult.OK)
-                    {   lbl.Text = text;
-                        Controls.Add(lbl);}
+                    string text = Interaction.InputBox("Siia kirjuta lahe tekst", "Lahe aken", "Siia kirjuta");
+                    if (MessageBox.Show("Kas sa tõesti tahad selle saata?", "Lahe salvestusaken", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                    {
+                        lbl.Text = text;
+                        Controls.Add(lbl);
+                    }
                     else
-                    {   lbl.Text = "Siis mina lisan oma teksti!";
-                        Controls.Add(lbl);}
+                    {
+                        lbl.Text = "...";
+                        Controls.Add(lbl);
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("это было круто", "Крутое окно");
+                    MessageBox.Show("See oli lahe", "Lahe aken");
                 }
             }
-            else if(e.Node.Text == "ListBox")
+            else if (e.Node.Text == "ListBox")
             {
                 lb = new ListBox();
                 lb.Items.Add("Dog");
                 lb.Items.Add("Cat");
                 lb.Items.Add("Dog and cat");
-                lb.Items.Add("Cat");
-                lb.Items.Add("Dog");
                 lb.Location = new Point(150,120);
                 lb.SelectedIndexChanged += new EventHandler(ls_SelectedIndexChanged);
                 Controls.Add(lb);
@@ -224,7 +239,6 @@ namespace FormElements
                 //
             }
         }
-
         private void menuFile_Exit_Select(object sender, EventArgs e)
         {
             Close();
@@ -232,39 +246,57 @@ namespace FormElements
         private void menuCatImage(object sender, EventArgs e)
         {
             string catimg = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Images\cat.png"));
+            pbCat.Image = Image.FromFile(catimg);
+            pbCat.Location = new Point(300, 200);
+            pbCat.SizeMode = PictureBoxSizeMode.StretchImage;
+            pbCat.Size = new Size(100, 100);
 
-            OpenImage(catimg);
+            if (!Controls.Contains(pbCat))
+                Controls.Add(pbCat);
         }
         private void menuDogImage(object sender, EventArgs e)
         {
             string dogimg = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Images\dog.jpg"));
+            pbDog.Image = Image.FromFile(dogimg);
+            pbDog.Location = new Point(200, 200);
+            pbDog.SizeMode = PictureBoxSizeMode.StretchImage;
+            pbDog.Size = new Size(100, 100);
 
-            OpenImage(dogimg);
-
-
+            if (!Controls.Contains(pbDog))
+                Controls.Add(pbDog);
         }
-
+        private void ClearImages()
+        {
+            Controls.Remove(pbCat);
+            Controls.Remove(pbDog);
+        }
         private void ls_SelectedIndexChanged(object sender, EventArgs e)
         {
+            ClearImages();
+
             switch (lb.SelectedItem.ToString())
-            {
-                case ("Cat"): menuCatImage(); break;
-                case ("Dog"): menuDogImage(); break;
-                case ("Dog and cat"): menuCatImage; menuDogImage; break;
+            {   
+                case "Cat":
+                    menuCatImage(sender, e);
+                    break;
+                case "Dog":
+                    menuDogImage(sender, e);
+                    break;
+                case "Dog and cat":
+                    menuCatImage(sender, e);
+                    menuDogImage(sender, e);
+                    break;
             }
         }
-
         private void TabC_Selected(object sender, TabControlEventArgs e)
         {
             //this.tabC.TabPages.Clear();
             tabC.TabPages.Remove(tabC.SelectedTab);
         }
-        
         private void Form1_Load(object sender, EventArgs e)
         {
            
         }
-
         private void TabC_DoubleClick(object sender, EventArgs e)
         {
             string title = "tabP" + (tabC.TabCount - 1).ToString();
@@ -272,14 +304,12 @@ namespace FormElements
             
             tabC.TabPages.Add(tb);
         }
-
         private void TabP3_DoubleClick(object sender, EventArgs e)
         {
             string title = "tabP" + (tabC.TabCount + 1).ToString();
             TabPage tb = new TabPage(title);
             tabC.TabPages.Add(tb);
         }
-
         private void r_btn_Checked(object sender, EventArgs e)
         {
             if (r_btn1.Checked)
@@ -295,30 +325,33 @@ namespace FormElements
                 BackColor = Color.White;
                 r_btn2.ForeColor = Color.Black;
                 r_btn1.ForeColor = Color.Black;
+                r_btn3.ForeColor = Color.Black;
+                r_btn4.ForeColor = Color.Black;
             }
             else if (r_btn3.Checked)
             {
                 BackColor = Color.Red;
                 r_btn2.ForeColor = Color.Black;
                 r_btn1.ForeColor = Color.Black;
+                r_btn3.ForeColor = Color.Black;
+                r_btn4.ForeColor = Color.Black;
             }
             else if (r_btn4.Checked)
             {
                 BackColor = Color.Yellow;
                 r_btn2.ForeColor = Color.Black;
                 r_btn1.ForeColor = Color.Black;
+                r_btn3.ForeColor = Color.Black;
+                r_btn4.ForeColor = Color.Black;
             }
         }
-
-        
-
         private void C_btn1_Click(object sender, EventArgs e)
         {
             c_btn3.Checked = !c_btn3.Checked;
             c_btn4.Checked = !c_btn4.Checked;
             c_btn5.Checked = !c_btn5.Checked;
+            c_btn6.Checked = !c_btn6.Checked;
         }
-
         private void C_btn1_CheckedChanged(object sender, EventArgs e)
         {           
             if (t)
@@ -336,19 +369,6 @@ namespace FormElements
                 c_btn1.Font = new Font("Arial", 36, FontStyle.Regular);
                 t = true;
             }            
-        }
-        void OpenImage(string imagePath)
-        {
-            if (File.Exists(imagePath))
-            {
-                pic.Image = Image.FromFile(imagePath);
-                pic.SizeMode = PictureBoxSizeMode.Zoom;
-                Controls.Add(pic);
-            }
-            else
-            {
-                MessageBox.Show("Файл не найден: " + imagePath);
-            }
         }
     }
 }
